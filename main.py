@@ -36,12 +36,46 @@ def save_weigth(model):
 	
 	verilog_path = "verilog"
 
+	with open(os.path.join(verilog_path, "w1.txt")) as f:
+		for i in range(784):
+			for j in range(256):
+				f.write(str(int(w1[j][i])))
+			f.write("\n")
+	with open(os.path.join(verilog_path, "b1.txt")) as f:
+		for i in range(784):
+			for j in range(256):
+				f.write(str(int(w1[j][i])))
+			f.write("\n")
 	with open(os.path.join(verilog_path, "W1.txt")) as f:
 		for i in range(784):
 			for j in range(256):
 				f.write(str(int(w1[j][i])))
 			f.write("\n")
-				
+	with open(os.path.join(verilog_path, "W1.txt")) as f:
+		for i in range(784):
+			for j in range(256):
+				f.write(str(int(w1[j][i])))
+			f.write("\n")
+	with open(os.path.join(verilog_path, "W1.txt")) as f:
+		for i in range(784):
+			for j in range(256):
+				f.write(str(int(w1[j][i])))
+			f.write("\n")
+	with open(os.path.join(verilog_path, "W1.txt")) as f:
+		for i in range(784):
+			for j in range(256):
+				f.write(str(int(w1[j][i])))
+			f.write("\n")
+	with open(os.path.join(verilog_path, "W1.txt")) as f:
+		for i in range(784):
+			for j in range(256):
+				f.write(str(int(w1[j][i])))
+			f.write("\n")
+	with open(os.path.join(verilog_path, "W1.txt")) as f:
+		for i in range(784):
+			for j in range(256):
+				f.write(str(int(w1[j][i])))
+			f.write("\n")
  
 def main():
 	model = BNN()
