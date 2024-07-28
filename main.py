@@ -48,29 +48,29 @@ def save_weigth(model):
 	with open(os.path.join(verilog_path, "w2.txt")) as f:
 		for i in range(256):
 			for j in range(128):
-				f.write(str(int(w1[j][i])))
+				f.write(str(int(w2[j][i])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b2.txt")) as f:
 		for j in range(128):
-			f.write(str(int(b1[j])))
+			f.write(str(int(b2[j])))
 		f.write("\n")
 	with open(os.path.join(verilog_path, "w3.txt")) as f:
 		for i in range(128):
 			for j in range(32):
-				f.write(str(int(w1[j][i])))
+				f.write(str(int(w3[j][i])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b3.txt")) as f:
 		for j in range(32):
-			f.write(str(int(b1[j])))
+			f.write(str(int(b3[j])))
 		f.write("\n")
 	with open(os.path.join(verilog_path, "w4.txt")) as f:
 		for i in range(32):
 			for j in range(10):
-				f.write(str(int(w1[j][i])))
+				f.write(str(int(w4[j][i])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b4.txt")) as f:
 		for j in range(10):
-			f.write(str(int(b1[j])))
+			f.write(str(int(b4[j])))
 		f.write("\n")
  
 def main():
