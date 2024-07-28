@@ -17,26 +17,31 @@ def train_step(x, t, criterion, optimizer, model):
 	return loss, preds
 
 def save_weigth(model):
-	weight1 = model.fc1.weight
-	weight1 = torch.where(weight1 >= 0, 1, 0)
-	bias1 = model.fc1.bias
-	bias1 = torch.where(bias1 >= 0, 1, 0)
-	weight2 = model.fc2.weight
-	weight2 = torch.where(weight2 >= 0, 1, 0)
-	bias2 = model.fc2.bias
-	bias2 = torch.where(bias2 >= 0, 1, 0)
-	weight3 = model.fc3.weight
-	weight3 = torch.where(weight3 >= 0, 1, 0)
-	bias3 = model.fc3.bias
-	bias3 = torch.where(bias3 >= 0, 1, 0)
-	weight4 = model.fc4.weight
-	weight4 = torch.where(weight4 >= 0, 1, 0)
-	bias4 = model.fc4.bias
-	bias4 = torch.where(bias4 >= 0, 1, 0)
+	w1 = model.fc1.weight
+	w1 = torch.where(w1 >= 0, 1, 0)
+	b1 = model.fc1.bias
+	b1 = torch.where(b1 >= 0, 1, 0)
+	w2 = model.fc2.weight
+	w2 = torch.where(w2 >= 0, 1, 0)
+	b2 = model.fc2.bias
+	b2 = torch.where(b2 >= 0, 1, 0)
+	w3 = model.fc3.wwight
+	w3 = torch.where(w3 >= 0, 1, 0)
+	b3 = model.fc3.bias
+	b3 = torch.where(b3 >= 0, 1, 0)
+	w4 = model.fc4.weight
+	w4 = torch.where(w4 >= 0, 1, 0)
+	b4 = model.fc4.bias
+	b4 = torch.where(b4 >= 0, 1, 0)
 	
-	path = "verilog"
+	verilog_path = "verilog"
 
-	with open(os.path.join())
+	with open(os.path.join(verilog_path, "W1.txt")) as f:
+		for i in range(784):
+			for j in range(256):
+				f.write(str(int(w1[j][i])))
+			f.write("\n")
+				
  
 def main():
 	model = BNN()
