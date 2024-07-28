@@ -5,6 +5,7 @@ import tensorflow as tf
 import torch.nn as nn
 import os
 import cv2
+import time
 from tensorflow.keras.datasets import mnist
 from model import BNN
 
@@ -123,15 +124,18 @@ def main():
 	count = 0
 	correct = 0
 	for (x, t) in test_dataloader:
+		time_start = time.time()
 		results = model(x).detach().numpy()
+		time_end = time.time()
 		for i in range(len(results)):
 			result = np.argmax(results[i])
 			ref = np.argmax(t[i].detach().numpy())
 			if result == ref:
 				correct += 1
 			count += 1
-	print("correct rate : ", correct / count) #0.9545
-
+	print("correct rate : ", correct / count) # 0.9545
+	time_predict = time_end - time_start # 0.004732s
+	print(f"prediction time: {time_predict}s (1step: {time_predict / 10000})")
 	# 重みの保存
 	save_weigth(model)
  
@@ -144,7 +148,6 @@ def main():
 	for li in [x_int]:
 		for x in li:
 			filename = f"{i:05d}.pbm"
-			print(filename)
 			save_image(filename, x)
 			i += 1
 	
