@@ -104,7 +104,7 @@ def main():
 	criterion = nn.CrossEntropyLoss()
 	optimizer = torch.optim.Adam(model.parameters(), lr = 0.001)
 
-	epochs = 1000
+	epochs = 300
 	for e in range(epochs):
 		train_loss = 0
 		# test_loss = 0
