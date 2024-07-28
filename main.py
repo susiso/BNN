@@ -4,8 +4,12 @@ import numpy as np
 import tensorflow as tf
 import torch.nn as nn
 import os
+import cv2
 from tensorflow.keras.datasets import mnist
 from model import BNN
+
+verilog_path = "verilog"
+image_path = "image"
 
 def train_step(x, t, criterion, optimizer, model):
 	model.train()
@@ -17,7 +21,7 @@ def train_step(x, t, criterion, optimizer, model):
 	return loss, preds
 
 def save_weigth(model):
-	os.makedirs("verilog", exist_ok=True)
+	os.makedirs(verilog_path, exist_ok=True)
 
 	w1 = model.fc1.weight
 	w1 = torch.where(w1 >= 0, 1, 0)
@@ -35,8 +39,6 @@ def save_weigth(model):
 	w4 = torch.where(w4 >= 0, 1, 0)
 	b4 = model.fc4.bias
 	b4 = torch.where(b4 >= 0, 1, 0)
-	
-	verilog_path = "verilog"
 
 	with open(os.path.join(verilog_path, "w1.txt"), "w") as f:
 		for i in range(784):
@@ -75,6 +77,9 @@ def save_weigth(model):
 			f.write(str(int(b4[j])))
 		f.write("\n")
  
+def save_image(filename, data):
+	cv2.imwrite(os.path.join(verilog_path, image_path, f"{filename}"), data, [cv2.IMWRITE_PXM_BINARY, 0])
+ 
 def main():
 	model = BNN()
 
@@ -84,11 +89,11 @@ def main():
 		model.load_state_dict(torch.load(path)) 
 
 	# data load
-	(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+	(train_images, train_labels), (test_images, test_labels_raw) = mnist.load_data()
 	train_images = train_images.reshape(len(train_images), 28*28)
 	test_images = test_images.reshape(len(test_images), 28*28)
 	train_labels = tf.keras.utils.to_categorical(train_labels, 10)
-	test_labels = tf.keras.utils.to_categorical(test_labels, 10)
+	test_labels = tf.keras.utils.to_categorical(test_labels_raw, 10)
 	train_x = torch.tensor(train_images, dtype=torch.float32).reshape(-1, 1, 28, 28)
 	train_x = torch.where(train_x >= 128, 1., -1.)
 	train_t = torch.tensor(train_labels, dtype=torch.float32)
@@ -104,7 +109,7 @@ def main():
 	criterion = nn.CrossEntropyLoss()
 	optimizer = torch.optim.Adam(model.parameters(), lr = 0.001)
 
-	epochs = 100
+	epochs = 10
 	for e in range(epochs):
 		train_loss = 0
 		# test_loss = 0
@@ -125,14 +130,26 @@ def main():
 			if result == ref:
 				correct += 1
 			count += 1
-	print("correct rate : ", correct / count)
+	print("correct rate : ", correct / count) #0.9545
 
 	# 重みの保存
 	save_weigth(model)
  
 	# テストデータの画像を保存
+	os.makedirs(os.path.join(verilog_path, image_path), exist_ok=True)
+	i = 0
+	x_numpy = test_x.to('cpu').detach().numpy().copy()
+	x_int = np.squeeze(x_numpy.astype(np.int64))
+	print(x_int.shape)
+	for li in [x_int]:
+		for x in li:
+			filename = f"{i:05d}.pbm"
+			print(filename)
+			save_image(filename, x)
+			i += 1
 	
-	
+	# テストデータのラベルを保存
+	np.savetxt(os.path.join(verilog_path, image_path, "label.txt"), test_labels_raw.astype(np.int32), fmt="%d")
 
 if __name__ == "__main__":
 	main()
