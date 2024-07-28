@@ -15,6 +15,24 @@ def train_step(x, t, criterion, optimizer, model):
 	loss.backward()
 	optimizer.step()
 	return loss, preds
+
+def save_weigth(model):
+	weight1 = model.fc1.weight
+	weight1 = torch.where(weight1 >= 0, 1, 0)
+	bias1 = model.fc1.bias
+	bias1 = torch.where(bias1 >= 0, 1, 0)
+	weight2 = model.fc2.weight
+	weight2 = torch.where(weight2 >= 0, 1, 0)
+	bias2 = model.fc2.bias
+	bias2 = torch.where(bias2 >= 0, 1, 0)
+	weight3 = model.fc3.weight
+	weight3 = torch.where(weight3 >= 0, 1, 0)
+	bias3 = model.fc3.bias
+	bias3 = torch.where(bias3 >= 0, 1, 0)
+	weight4 = model.fc4.weight
+	weight4 = torch.where(weight4 >= 0, 1, 0)
+	bias4 = model.fc4.bias
+	bias4 = torch.where(bias4 >= 0, 1, 0)
  
 def main():
 	model = BNN()
