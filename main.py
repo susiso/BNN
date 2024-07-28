@@ -33,6 +33,10 @@ def save_weigth(model):
 	weight4 = torch.where(weight4 >= 0, 1, 0)
 	bias4 = model.fc4.bias
 	bias4 = torch.where(bias4 >= 0, 1, 0)
+	
+	path = "verilog"
+
+	with open(os.path.join())
  
 def main():
 	model = BNN()
