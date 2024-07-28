@@ -17,6 +17,8 @@ def train_step(x, t, criterion, optimizer, model):
 	return loss, preds
 
 def save_weigth(model):
+	os.makedirs("verilog", exist_ok=True)
+
 	w1 = model.fc1.weight
 	w1 = torch.where(w1 >= 0, 1, 0)
 	b1 = model.fc1.bias
@@ -25,7 +27,7 @@ def save_weigth(model):
 	w2 = torch.where(w2 >= 0, 1, 0)
 	b2 = model.fc2.bias
 	b2 = torch.where(b2 >= 0, 1, 0)
-	w3 = model.fc3.wwight
+	w3 = model.fc3.weight
 	w3 = torch.where(w3 >= 0, 1, 0)
 	b3 = model.fc3.bias
 	b3 = torch.where(b3 >= 0, 1, 0)
@@ -36,39 +38,39 @@ def save_weigth(model):
 	
 	verilog_path = "verilog"
 
-	with open(os.path.join(verilog_path, "w1.txt")) as f:
+	with open(os.path.join(verilog_path, "w1.txt"), "w") as f:
 		for i in range(784):
 			for j in range(256):
 				f.write(str(int(w1[j][i])))
 			f.write("\n")
-	with open(os.path.join(verilog_path, "b1.txt")) as f:
+	with open(os.path.join(verilog_path, "b1.txt"), "w") as f:
 		for j in range(256):
 			f.write(str(int(b1[j])))
 		f.write("\n")
-	with open(os.path.join(verilog_path, "w2.txt")) as f:
+	with open(os.path.join(verilog_path, "w2.txt"), "w") as f:
 		for i in range(256):
 			for j in range(128):
 				f.write(str(int(w2[j][i])))
 			f.write("\n")
-	with open(os.path.join(verilog_path, "b2.txt")) as f:
+	with open(os.path.join(verilog_path, "b2.txt"), "w") as f:
 		for j in range(128):
 			f.write(str(int(b2[j])))
 		f.write("\n")
-	with open(os.path.join(verilog_path, "w3.txt")) as f:
+	with open(os.path.join(verilog_path, "w3.txt"), "w") as f:
 		for i in range(128):
 			for j in range(32):
 				f.write(str(int(w3[j][i])))
 			f.write("\n")
-	with open(os.path.join(verilog_path, "b3.txt")) as f:
+	with open(os.path.join(verilog_path, "b3.txt"), "w") as f:
 		for j in range(32):
 			f.write(str(int(b3[j])))
 		f.write("\n")
-	with open(os.path.join(verilog_path, "w4.txt")) as f:
+	with open(os.path.join(verilog_path, "w4.txt"), "w") as f:
 		for i in range(32):
 			for j in range(10):
 				f.write(str(int(w4[j][i])))
 			f.write("\n")
-	with open(os.path.join(verilog_path, "b4.txt")) as f:
+	with open(os.path.join(verilog_path, "b4.txt"), "w") as f:
 		for j in range(10):
 			f.write(str(int(b4[j])))
 		f.write("\n")
@@ -125,6 +127,7 @@ def main():
 			count += 1
 	print("correct rate : ", correct / count)
 
+	save_weigth(model)
 
 if __name__ == "__main__":
 	main()
