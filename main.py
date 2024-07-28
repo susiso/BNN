@@ -104,7 +104,7 @@ def main():
 	criterion = nn.CrossEntropyLoss()
 	optimizer = torch.optim.Adam(model.parameters(), lr = 0.001)
 
-	epochs = 300
+	epochs = 100
 	for e in range(epochs):
 		train_loss = 0
 		# test_loss = 0
@@ -127,7 +127,12 @@ def main():
 			count += 1
 	print("correct rate : ", correct / count)
 
+	# 重みの保存
 	save_weigth(model)
+ 
+	# テストデータの画像を保存
+	
+	
 
 if __name__ == "__main__":
 	main()
