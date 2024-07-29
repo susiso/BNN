@@ -42,40 +42,40 @@ def save_weigth(model):
 	b4 = torch.where(b4 >= 0, 1, 0)
 
 	with open(os.path.join(verilog_path, "w1.txt"), "w") as f:
-		for i in range(784):
-			for j in range(256):
-				f.write(str(int(w1[j][i])))
+		for i in range(256):
+			for j in range(784):
+				f.write(str(int(w1[i][j])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b1.txt"), "w") as f:
-		for j in range(256):
-			f.write(str(int(b1[j])))
+		for i in range(256):
+			f.write(str(int(b1[i])))
 		f.write("\n")
 	with open(os.path.join(verilog_path, "w2.txt"), "w") as f:
-		for i in range(256):
-			for j in range(128):
-				f.write(str(int(w2[j][i])))
+		for i in range(128):
+			for j in range(256):
+				f.write(str(int(w2[i][j])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b2.txt"), "w") as f:
-		for j in range(128):
-			f.write(str(int(b2[j])))
+		for i in range(128):
+			f.write(str(int(b2[i])))
 		f.write("\n")
 	with open(os.path.join(verilog_path, "w3.txt"), "w") as f:
-		for i in range(128):
-			for j in range(32):
-				f.write(str(int(w3[j][i])))
+		for i in range(32):
+			for j in range(128):
+				f.write(str(int(w3[i][j])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b3.txt"), "w") as f:
-		for j in range(32):
-			f.write(str(int(b3[j])))
+		for i in range(32):
+			f.write(str(int(b3[i])))
 		f.write("\n")
 	with open(os.path.join(verilog_path, "w4.txt"), "w") as f:
-		for i in range(32):
-			for j in range(10):
-				f.write(str(int(w4[j][i])))
+		for i in range(10):
+			for j in range(32):
+				f.write(str(int(w4[i][j])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b4.txt"), "w") as f:
 		for j in range(10):
-			f.write(str(int(b4[j])))
+			f.write(str(int(b4[i])))
 		f.write("\n")
  
 def save_image(filename, data):
@@ -110,7 +110,7 @@ def main():
 	criterion = nn.CrossEntropyLoss()
 	optimizer = torch.optim.Adam(model.parameters(), lr = 0.001)
 
-	epochs = 10
+	epochs = 1
 	for e in range(epochs):
 		train_loss = 0
 		# test_loss = 0
@@ -133,8 +133,8 @@ def main():
 			if result == ref:
 				correct += 1
 			count += 1
-	print("correct rate : ", correct / count) # 0.9545
-	time_predict = time_end - time_start # 0.004732s
+	print("correct rate : ", correct / count) # 0.954
+	time_predict = time_end - time_start # 0.004676s
 	print(f"prediction time: {time_predict}s (1step: {time_predict / 10000})")
 	# 重みの保存
 	save_weigth(model)
@@ -144,7 +144,6 @@ def main():
 	i = 0
 	x_numpy = test_x.to('cpu').detach().numpy().copy()
 	x_int = np.squeeze(x_numpy.astype(np.int64))
-	print(x_int.shape)
 	for li in [x_int]:
 		for x in li:
 			filename = f"{i:05d}.pbm"
