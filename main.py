@@ -43,7 +43,7 @@ def save_weigth(model):
 
 	with open(os.path.join(verilog_path, "w1.txt"), "w") as f:
 		for i in range(256):
-			for j in range(784):
+			for j in reversed(range(784)): # verilogのreadmembに対応
 				f.write(str(int(w1[i][j])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b1.txt"), "w") as f:
@@ -52,7 +52,7 @@ def save_weigth(model):
 			f.write("\n")
 	with open(os.path.join(verilog_path, "w2.txt"), "w") as f:
 		for i in range(128):
-			for j in range(256):
+			for j in reversed(range(256)):
 				f.write(str(int(w2[i][j])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b2.txt"), "w") as f:
@@ -61,7 +61,7 @@ def save_weigth(model):
 			f.write("\n")
 	with open(os.path.join(verilog_path, "w3.txt"), "w") as f:
 		for i in range(32):
-			for j in range(128):
+			for j in reversed(range(128)):
 				f.write(str(int(w3[i][j])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b3.txt"), "w") as f:
@@ -70,7 +70,7 @@ def save_weigth(model):
 			f.write("\n")
 	with open(os.path.join(verilog_path, "w4.txt"), "w") as f:
 		for i in range(10):
-			for j in range(32):
+			for j in reversed(range(32)):
 				f.write(str(int(w4[i][j])))
 			f.write("\n")
 	with open(os.path.join(verilog_path, "b4.txt"), "w") as f:
