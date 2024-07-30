@@ -113,7 +113,6 @@ def main():
 	epochs = 1
 	for e in range(epochs):
 		train_loss = 0
-		# test_loss = 0
 		for (x, t) in train_dataloader:
 			loss, preds = train_step(x, t, criterion, optimizer, model)
 			train_loss += loss
@@ -123,20 +122,21 @@ def main():
  
 	count = 0
 	correct = 0
+	time_start = time.time()
 	for (x, t) in test_dataloader:
-		time_start = time.time()
 		results = model(x).detach().numpy()
-		time_end = time.time()
 		for i in range(len(results)):
 			result = np.argmax(results[i])
 			ref = np.argmax(t[i].detach().numpy())
 			if result == ref:
 				correct += 1
 			count += 1
+	time_end = time.time()
 	print("correct rate : ", correct / count) # 0.954
-	time_predict = time_end - time_start # 0.004676s
+	time_predict = time_end - time_start # 0.13033s 上のfor i in range(len(results))以下をコメントアウト
 	print(f"prediction time: {time_predict}s (1step: {time_predict / 10000})")
 	# 重みの保存
+	
 	save_weigth(model)
  
 	# テストデータの画像を保存
