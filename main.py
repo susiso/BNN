@@ -49,7 +49,7 @@ def save_weigth(model):
 	with open(os.path.join(verilog_path, "b1.txt"), "w") as f:
 		for i in range(256):
 			f.write(str(int(b1[i])))
-		f.write("\n")
+			f.write("\n")
 	with open(os.path.join(verilog_path, "w2.txt"), "w") as f:
 		for i in range(128):
 			for j in range(256):
@@ -58,7 +58,7 @@ def save_weigth(model):
 	with open(os.path.join(verilog_path, "b2.txt"), "w") as f:
 		for i in range(128):
 			f.write(str(int(b2[i])))
-		f.write("\n")
+			f.write("\n")
 	with open(os.path.join(verilog_path, "w3.txt"), "w") as f:
 		for i in range(32):
 			for j in range(128):
@@ -67,7 +67,7 @@ def save_weigth(model):
 	with open(os.path.join(verilog_path, "b3.txt"), "w") as f:
 		for i in range(32):
 			f.write(str(int(b3[i])))
-		f.write("\n")
+			f.write("\n")
 	with open(os.path.join(verilog_path, "w4.txt"), "w") as f:
 		for i in range(10):
 			for j in range(32):
@@ -76,7 +76,7 @@ def save_weigth(model):
 	with open(os.path.join(verilog_path, "b4.txt"), "w") as f:
 		for j in range(10):
 			f.write(str(int(b4[i])))
-		f.write("\n")
+			f.write("\n")
  
 def save_image(filename, data):
 	cv2.imwrite(os.path.join(verilog_path, image_path, f"{filename}"), data, [cv2.IMWRITE_PXM_BINARY, 0])
