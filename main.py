@@ -146,7 +146,7 @@ def main():
 	x_int = np.squeeze(x_numpy.astype(np.int64))
 	for li in [x_int]:
 		for x in li:
-			filename = f"{i:05d}.pbm"
+			filename = f"{i:d}.pbm"
 			save_image(filename, x)
 			i += 1
 	
