@@ -1,0 +1,104 @@
+module BinarizedNeuralNetwork(
+	// Outputs
+	outputs, rcv_req, snd_ack, 
+	// Inputs
+	clk, xrst, inputs, rcv_ack, snd_req
+);
+	
+	input inputs;
+	input clk;
+	input xrst;
+	input rcv_ack;
+	input snd_req;
+	
+	output [3:0] outputs;
+	output rcv_req;
+	output snd_ack;
+	
+	wire [783:0] image_reg_out;
+	wire image_reg_snd_req;
+	wire image_reg_snd_ack;
+	
+	wire [255:0] input_layer_out;
+	wire input_layer_snd_req;
+	wire input_layer_snd_ack;
+	
+	wire [127:0] mid1_layer_out;
+	wire mid1_layer_snd_req;
+	wire mid1_layer_snd_ack;
+	
+	wire [31:0] mid2_layer_out;
+	wire mid2_layer_snd_req;
+	wire mid2_layer_snd_ack;
+
+	wire [9:0] mid3_layer_out;
+	wire mid3_layer_snd_req;
+	wire mid3_layer_snd_ack;
+	
+	image_reg Image_Reg(
+		.outputs(image_reg_out), 
+		.rcv_req(rcv_req), 
+		.snd_ack(image_reg_snd_ack),
+		.clk(clk),	
+		.xrst(xrst), 
+		.inputs(inputs), 
+		.rcv_ack(rcv_ack), 
+		.snd_req(image_reg_snd_req)
+	);
+	
+	input_layer Input_Layer(
+		.outputs(input_layer_out), 
+		.rcv_req(image_reg_snd_req),
+		.snd_ack(input_layer_snd_ack),
+		.clk(clk), 
+		.xrst(xrst), 
+		.inputs(image_reg_out), 
+		.rcv_ack(image_reg_snd_ack), 
+		.snd_req(input_layer_snd_req)
+	);
+	
+
+	mid1_layer Mid1_Layer(
+		.outputs(mid1_layer_out), 
+		.rcv_req(input_layer_snd_req),
+		.snd_ack(mid1_layer_snd_ack),
+		.clk(clk), 
+		.xrst(xrst), 
+		.inputs(input_layer_out), 
+		.rcv_ack(input_layer_snd_ack), 
+		.snd_req(mid1_layer_snd_req)
+	);
+	
+	mid2_layer Mid2_Layer(
+		.outputs(mid2_layer_out), 
+		.rcv_req(mid1_layer_snd_req),
+		.snd_ack(mid2_layer_snd_ack),
+		.clk(clk), 
+		.xrst(xrst), 
+		.inputs(mid1_layer_out), 
+		.rcv_ack(mid1_layer_snd_ack), 
+		.snd_req(mid2_layer_snd_req)
+	);
+
+	mid3_layer Mid3_Layer(
+		.outputs(mid3_layer_out), 
+		.rcv_req(mid2_layer_snd_req),
+		.snd_ack(mid3_layer_snd_ack),
+		.clk(clk), 
+		.xrst(xrst), 
+		.inputs(mid2_layer_out), 
+		.rcv_ack(mid2_layer_snd_ack), 
+		.snd_req(mid3_layer_snd_req)
+	);
+	
+	output_layer Output_Layer(
+		.outputs(outputs), 
+		.rcv_req(mid3_layer_snd_req),
+		.snd_ack(snd_ack),
+		.clk(clk), 
+		.xrst(xrst), 
+		.inputs(mid3_layer_out), 
+		.rcv_ack(mid3_layer_snd_ack), 
+		.snd_req(snd_req)
+	);
+endmodule

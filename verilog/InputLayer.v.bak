@@ -1,0 +1,6 @@
+module input_layer(
+	// Outputs
+	rcv_req, outputs, snd_ack,
+	// Inputs
+	clk, xrst, inputs, rcv_ack, snd_req
+);
