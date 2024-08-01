@@ -10,7 +10,6 @@ from tensorflow.keras.datasets import mnist
 from model import BNN
 
 verilog_path = "verilog"
-image_path = "image"
 
 def train_step(x, t, criterion, optimizer, model):
 	model.train()
@@ -79,7 +78,7 @@ def save_weigth(model):
 			f.write("\n")
  
 def save_image(filename, data):
-	cv2.imwrite(os.path.join(verilog_path, image_path, f"{filename}"), data, [cv2.IMWRITE_PXM_BINARY, 0])
+	cv2.imwrite(os.path.join(verilog_path, f"{filename}"), data, [cv2.IMWRITE_PXM_BINARY, 0])
  
 def main():
 	model = BNN()
@@ -137,10 +136,9 @@ def main():
 	print(f"prediction time: {time_predict}s (1step: {time_predict / 10000})")
 	# 重みの保存
 	
-	save_weigth(model)
+	# save_weigth(model)
  
 	# テストデータの画像を保存
-	os.makedirs(os.path.join(verilog_path, image_path), exist_ok=True)
 	i = 0
 	x_numpy = test_x.to('cpu').detach().numpy().copy()
 	x_int = np.squeeze(x_numpy.astype(np.int64))
@@ -151,7 +149,7 @@ def main():
 			i += 1
 	
 	# テストデータのラベルを保存
-	np.savetxt(os.path.join(verilog_path, image_path, "label.txt"), test_labels_raw.astype(np.int32), fmt="%d")
+	np.savetxt(os.path.join(verilog_path, "label.txt"), test_labels_raw.astype(np.int32), fmt="%d")
 
 if __name__ == "__main__":
 	main()
