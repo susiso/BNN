@@ -1,0 +1,88 @@
+module output_layer(
+	// Outputs
+	outputs, rcv_req, snd_ack,
+	// Inputs
+	clk, xrst, inputs, rcv_ack, snd_req
+	);
+	
+	parameter INPUT_NUM = 10;
+	
+	input		clk;
+	input		xrst;
+	
+	input		rcv_ack;
+	input		snd_req;
+	input [9:0]	inputs;
+	
+	output rcv_req;
+	output snd_ack;
+	output outputs;
+
+	reg [9:0] inputs_mem;
+	reg [3:0] outputs_mem;
+	
+	// state machine
+   reg [2:0]   st_reg;
+   parameter   ST_WAIT    = 3'd0;
+   parameter   ST_RCV     = 3'd1;
+   parameter   ST_CALC 	  = 3'd2;
+   parameter   ST_SND_WAIT     = 3'd3;
+	parameter   ST_SND	  = 3'd4;
+	
+	always @(posedge clk or negedge xrst) begin
+		if (xrst == 1'b0)
+			st_reg <= ST_WAIT;
+		else case (st_reg)
+			ST_WAIT:
+				if (rcv_ack == 1'b1)
+					st_reg <= ST_RCV;
+			ST_RCV:
+				if (rcv_req == 1'b0)
+					st_reg <= ST_CALC;
+			ST_CALC:
+				if (address == INPUT_NUM - 1)
+					st_reg <= ST_SND_WAIT;
+			ST_SND_WAIT:
+				if (snd_req == 1'b1)
+					st_reg <= ST_SND;
+			ST_SND:
+				if (snd_req == 1'b0)
+					st_reg <= ST_WAIT;
+		endcase
+	end
+	
+	always @(posedge clk or negedge xrst) begin
+		if (xrst == 1'b0)
+			inputs_mem <= 0;
+		else if (st_reg == ST_RCV)
+			inputs_mem <= inputs;
+	end
+	
+	assign rcv_req = (st_reg == ST_WAIT) ? 1'b1: 1'b0;
+	assign snd_ack = (st_reg == ST_SND) ? 1'b1: 1'b0;
+		
+	wire [3:0] result;
+	
+	assign result = (inputs_mem[0] < inputs_mem[1]) ? 0
+	:	(inputs_mem[1] < inputs_mem[2]) ? 1
+	:	(inputs_mem[2] < inputs_mem[3]) ? 2
+	:	(inputs_mem[3] < inputs_mem[4]) ? 3
+	:	(inputs_mem[4] < inputs_mem[5]) ? 4
+	:	(inputs_mem[5] < inputs_mem[6]) ? 5
+	:	(inputs_mem[6] < inputs_mem[7]) ? 6
+	:	(inputs_mem[7] < inputs_mem[8]) ? 7
+	:	(inputs_mem[8] < inputs_mem[9]) ? 8
+	:	9;
+	
+	always @(posedge clk or negedge xrst) begin
+		if (xrst == 1'b0)
+			outputs_mem <= 0;
+		else if(st_reg == ST_CALC)
+			outputs_mem[address] <= result;
+	end
+	
+	assign outputs = outputs_mem;
+	
+endmodule
+
+endmodule

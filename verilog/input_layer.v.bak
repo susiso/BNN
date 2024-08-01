@@ -1,0 +1,154 @@
+module input_layer(
+	// Outputs
+	outputs, rcv_req, snd_ack,
+	// Inputs
+	clk, xrst, inputs, rcv_ack, snd_req
+	);
+	
+	parameter INPUT_NUM = 784
+	
+	input		clk;
+	input		xrst;
+	
+	input		rcv_ack;
+	input		snd_req;
+	input [783:0]	inputs;
+	
+	output rcv_req;
+	output snd_ack;
+	output [255:0] outputs;
+	
+	reg [9:0] address
+	reg [783:0] inputs_mem;
+	reg [783:0] w1;
+	reg [254:0] outputs_mem;
+	reg b1;
+	
+	// state machine
+   reg [2:0]   st_reg;
+   parameter   ST_WAIT    = 3'd0;
+   parameter   ST_RCV     = 3'd1;
+   parameter   ST_CALC 	  = 3'd2;
+   parameter   ST_SND_WAIT     = 3'd3;
+	parameter   ST_SND	  = 3'd4;
+	
+	always @(posedge clk or negedge xrst) begin
+		if (xrst == 1'b0)
+			st_reg <= ST_WAIT;
+		else case (st_reg)
+			ST_WAIT:
+				if (rcv_ack == 1'b1)
+					st_reg <= ST_RCV;
+			ST_RCV:
+				if (rcv_req == 1'b0)
+					st_reg <= ST_CALC;
+			ST_CALC:
+				if (address == INPUT_NUM - 1)
+					st_reg <= ST_SND_WAIT;
+			ST_SND_WAIT:
+				if (snd_req == 1'b1):
+					st_reg <= ST_SND;
+			ST_SND:
+				if (snd_req == 1'b0)
+					st_reg <= ST_WAIT;
+		endcase
+	end
+	
+	always @(posedge clk or negedge xrst) begin
+		if (st_reg == ST_WAIT)
+			rcv_req == 1'b1;
+		else if (st_reg == ST_RCV) begin
+			inputs_mem <= inputs;
+			rcv_req <= 1'b0;
+		end
+		else if (st_reg == ST_SND_WAIT)
+			if (snd_req == 1'b1)
+				snd_ack <= 1'b1;
+		else if (st_reg == ST_SND)
+			if (snd_req == 1'b0)
+				snd_ack <= 1'b0;
+	end
+	
+	always @(posedge clk or negedge xrst) begin
+		if (xrst == 1'b0)
+			address <= 10'b0;
+		else if (st_reg <= ST_CALC) begin
+			if (address == INPUT_NUM - 1)
+				address <= 10'b0;
+			else
+				address <= address + 10'b1;
+		end
+	end
+	
+	weight_rom_input Weight_Rom_Input(.address(address), .w1(w1), b1(b1))
+	
+	wire [783:0] m1;
+	wire [391:0] m2;
+	wire [195:0] m3;
+	wire [97:0] m4;
+	wire [48:0] m5;
+	wire [24:0] m6;
+	wire [11:0] m7;
+	wire [5:0] m8;
+	wire [2:0] m9;
+	wire [1:0] m10;
+	wire m11;
+	
+	integer i;
+	assign m1 = inputs_mem ^ w1;
+	for (i = 0; i < 392; i++) begin
+		assign m2[i] = m1[2 * i] ^ m1[2 * i + 1];
+	end
+	for (i = 0; i < 196; i++) begin
+		assign m3[i] = m2[2 * i] ^ m2[2 * i + 1];
+	end
+	for (i = 0; i < 98; i++) begin
+		assign m4[i] = m3[2 * i] ^ m3[2 * i + 1];
+	end
+	for (i = 0; i < 49; i++) begin
+		assign m5[i] = m4[2 * i] ^ m4[2 * i + 1];
+	end
+	for (i = 0; i < 25; i++) begin
+		if (i == 24)
+			assign m6[i] = m5[2 * i] ^ b1;
+		else
+			assign m6[i] = m5[2 * i] ^ m5[2 * i + 1];
+	end
+	for (i = 0; i < 12; i++) begin
+		assign m7[i] = m6[2 * i] ^ m6[2 * i + 1];
+	end
+	for (i = 0; i < 6; i++) begin
+		assign m8[i] = m7[2 * i] ^ m7[2 * i + 1];
+	end
+	for (i = 0; i < 3; i++) begin
+		assign m9[i] = m8[2 * i] ^ m8[2 * i + 1];
+	end
+	for (i = 0; i < 2; i++) begin
+		if (i == 1)
+			assign m10[i] = m9[2 * i] ^ m6[24];
+		assign m10[i] = m9[2 * i] ^ m9[2 * i + 1];
+	end
+	assign m11 = m10[0] ^ m10[1]
+	
+	always @(posedge clk or negedge xrst) begin
+		outputs_mem[address] <= m11;
+	end
+	
+end module
+
+module weight_rom_input(address, w1, b1);
+	input [9:0] address;
+	output [783:0] w1;
+	output b1;
+
+	reg [783:0] memory_w1 [255:0];
+	reg [255:0] memory_b1;
+	
+	assign w1 = memory_w1[address];
+	assign b1 = memory_b1[address];
+
+	initial begin
+		$readmemb("w1.txt", w1);
+		$readmemb("b1.txt", b1);
+	end
+endmodule

@@ -1,0 +1,155 @@
+module input_layer(
+	// Outputs
+	outputs, rcv_req, snd_ack,
+	// Inputs
+	clk, xrst, inputs, rcv_ack, snd_req
+	);
+	
+	parameter INPUT_NUM = 784;
+	
+	input		clk;
+	input		xrst;
+	
+	input		rcv_ack;
+	input		snd_req;
+	input [783:0]	inputs;
+	
+	output rcv_req;
+	output snd_ack;
+	output [255:0] outputs;
+	
+	reg [7:0] address;
+	reg [783:0] inputs_mem;
+	wire [783:0] w1;
+	reg [254:0] outputs_mem;
+	wire b1;
+	
+	// state machine
+   reg [2:0]   st_reg;
+   parameter   ST_WAIT    = 3'd0;
+   parameter   ST_RCV     = 3'd1;
+   parameter   ST_CALC 	  = 3'd2;
+   parameter   ST_SND_WAIT     = 3'd3;
+	parameter   ST_SND	  = 3'd4;
+	
+	always @(posedge clk or negedge xrst) begin
+		if (xrst == 1'b0)
+			st_reg <= ST_WAIT;
+		else case (st_reg)
+			ST_WAIT:
+				if (rcv_ack == 1'b1)
+					st_reg <= ST_RCV;
+			ST_RCV:
+				if (rcv_req == 1'b0)
+					st_reg <= ST_CALC;
+			ST_CALC:
+				if (address == INPUT_NUM - 1)
+					st_reg <= ST_SND_WAIT;
+			ST_SND_WAIT:
+				if (snd_req == 1'b1)
+					st_reg <= ST_SND;
+			ST_SND:
+				if (snd_req == 1'b0)
+					st_reg <= ST_WAIT;
+		endcase
+	end
+	
+	always @(posedge clk or negedge xrst) begin
+		if (xrst == 1'b0)
+			inputs_mem <= 0;
+		else if (st_reg == ST_RCV)
+			inputs_mem <= inputs;
+	end
+	
+	assign rcv_req = (st_reg == ST_WAIT) ? 1'b1: 1'b0;
+	assign snd_ack = (st_reg == ST_SND) ? 1'b1: 1'b0;
+	
+	always @(posedge clk or negedge xrst) begin
+		if (xrst == 1'b0)
+			address <= 8'b0;
+		else if (st_reg == ST_CALC) begin
+			if (address == INPUT_NUM - 1)
+				address <= 8'b0;
+			else
+				address <= address + 8'b1;
+		end
+	end
+	
+	weight_rom_input Weight_Rom_Input(.maddress(address), .mw1(w1), .mb1(b1));
+	
+	wire [783:0] m1;
+	wire [391:0] m2;
+	wire [195:0] m3;
+	wire [97:0] m4;
+	wire [48:0] m5;
+	wire [24:0] m6;
+	wire [11:0] m7;
+	wire [5:0] m8;
+	wire [2:0] m9;
+	wire [1:0] m10;
+	wire m11;
+	
+	genvar i;
+	assign m1 = inputs_mem ^ w1;
+	generate
+	for (i = 0; i < 392; i = i + 1) begin : G1
+		assign m2[i] = m1[2 * i] ^ m1[2 * i + 1];
+	end
+	for (i = 0; i < 196; i = i + 1) begin : G2
+		assign m3[i] = m2[2 * i] ^ m2[2 * i + 1];
+	end
+	for (i = 0; i < 98; i = i + 1) begin : G3
+		assign m4[i] = m3[2 * i] ^ m3[2 * i + 1];
+	end
+	for (i = 0; i < 49; i = i + 1) begin : G4
+		assign m5[i] = m4[2 * i] ^ m4[2 * i + 1];
+	end
+	for (i = 0; i < 25; i = i + 1) begin : G5
+		if (i == 24)
+			assign m6[i] = m5[2 * i] ^ b1;
+		else
+			assign m6[i] = m5[2 * i] ^ m5[2 * i + 1];
+	end
+	for (i = 0; i < 12; i = i + 1) begin : G6
+		assign m7[i] = m6[2 * i] ^ m6[2 * i + 1];
+	end
+	for (i = 0; i < 6; i = i + 1) begin : G7
+		assign m8[i] = m7[2 * i] ^ m7[2 * i + 1];
+	end
+	for (i = 0; i < 3; i = i + 1) begin : G8
+		assign m9[i] = m8[2 * i] ^ m8[2 * i + 1];
+	end
+	for (i = 0; i < 2; i = i + 1) begin : G9
+		if (i == 1)
+			assign m10[i] = m9[2 * i] ^ m6[24];
+		else
+			assign m10[i] = m9[2 * i] ^ m9[2 * i + 1];
+	end
+	endgenerate
+	
+	assign m11 = m10[0] ^ m10[1];
+	
+	always @(posedge clk or negedge xrst) begin
+		outputs_mem[address] <= m11;
+	end
+	
+	assign outputs = outputs_mem;
+	
+endmodule
+
+module weight_rom_input(maddress, mw1, mb1);
+	input [7:0] maddress;
+	output [783:0] mw1;
+	output mb1;
+
+	reg [783:0] memory_w1 [255:0];
+	reg memory_b1 [255:0];
+	
+	assign mw1 = memory_w1[maddress];
+	assign mb1 = memory_b1[maddress];
+
+	initial begin
+		$readmemb("./w1.txt", memory_w1);
+		$readmemb("./b1.txt", memory_b1);
+	end
+endmodule
