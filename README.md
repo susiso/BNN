@@ -25,9 +25,7 @@ label.txt：テストデータの正解ラベル <br>
 result_hardBNN.txt：ハードウェアBNN（verilog）のテストデータに対する出力結果 <br>
 
 ## ハードウェア（verilog）
-verilogディレクトリ以下でquartusを使用してハードウェアBNNの検証を行った。
-
-### 層構成
+verilogディレクトリ以下でquartusを使用してハードウェアBNNの検証を行った。<br>
 2値を-1, 1から1, 0に変換し、Pythonのモデルを再現した。<br>
 積和演算をxorで、活性化関数を比較器で置き換えている。<br>
 
@@ -41,8 +39,11 @@ output_layer.v：出力層（10_6bit -> 整数（4bit））<br>
 BinarizedNeuralNetwork.v：topモジュール<br>
 test_top.v：BinarizedNeuralNetwork.vのテストベンチ<br>
 
-まず、上位ディレクトリでmain.pyにより、画像データ、重みのデータをverilogディレクトリ内に生成する。<br>
+## 実行方法
+main.pyにより、画像データ、重みのデータをverilogディレクトリ内に生成する。<br>
 （imageディレクトリを作ってまとめたかったが、テストベンチでサブディレクトリの画像をうまく読み込めなかった）<br>
+既存の重みのデータはエポックを3000ほど繰り返し、テストデータに対して95.4%の正解率である。<br>
+main.pyを実行すると、重みを読み込んで学習し上書きするため、繰り返し実行して精度を高めることができる。<br>
 次に、test_top.vによりシミュレーションを行う。結果をテキストファイル（result.txt）として出力する。<br>
-正解率はresult.txtとlabel.txt（main.pyによって生成）によって行う。
+正解率はresult.txtとlabel.txt（main.pyによって生成）を使用してresult_compare.pyによって計算する。
 
