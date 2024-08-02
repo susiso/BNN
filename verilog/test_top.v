@@ -43,8 +43,8 @@ module test_top();
 
    // test senario
    initial begin
-   fout = $fopen("result10.txt", "a");
-	for (j = 9000; j < 10000; j = j + 1) begin
+   fout = $fopen("result.txt", "a");
+	for (j = 0; j < 10000; j = j + 1) begin
 	
 	 fin = $fopen($sformatf("%0d.pbm", j), "r");
 	 // skip header lines

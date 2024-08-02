@@ -149,7 +149,7 @@ def main():
 			i += 1
 	
 	# テストデータのラベルを保存
-	np.savetxt(os.path.join(verilog_path, "label.txt"), test_labels_raw.astype(np.int32), fmt="%d")
+	np.savetxt("label.txt", test_labels_raw.astype(np.int32), fmt="%d")
 
 if __name__ == "__main__":
 	main()
