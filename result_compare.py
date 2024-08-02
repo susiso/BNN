@@ -1,7 +1,7 @@
 import numpy as np
 
-torch_result = np.loadtxt("verilog/label.txt")
-quartus_result = np.loadtxt("verilog/result_all.txt")
+torch_result = np.loadtxt("label.txt")
+quartus_result = np.loadtxt("result_hardBNN.txt")
 
 print(torch_result, quartus_result)
 
